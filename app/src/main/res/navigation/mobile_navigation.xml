@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/roomsFragment"
-        android:name="com.sujata.virginmoneydemo.ui.Rooms.RoomsFragment"
+        android:name="com.sujata.virginmoneydemo.ui.rooms.RoomsFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_rooms" />
 

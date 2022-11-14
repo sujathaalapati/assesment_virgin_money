@@ -8,19 +8,22 @@ import androidx.lifecycle.viewModelScope
 import com.sujata.virginmoneydemo.data.PeoplesRepository
 import com.sujata.virginmoneydemo.domain.PeoplesData
 import com.sujata.virginmoneydemo.framework.api.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 const val TAG="PeoplesViewModel"
-class PeoplesViewModel (private val peoplesRepository: PeoplesRepository): ViewModel() {
+
+@HiltViewModel
+class PeoplesViewModel @Inject constructor(val peoplesRepository: PeoplesRepository): ViewModel() {
     private val _peoplesDataResponse=MutableLiveData<Resource<List<PeoplesData>>>()
-    val peoplesDataResponse:LiveData<Resource<List<PeoplesData>>> get()=_peoplesDataResponse
+    val peoplesDataResponse:MutableLiveData<Resource<List<PeoplesData>>> get()=_peoplesDataResponse
 
     fun fetchPeoplesData(){
         _peoplesDataResponse.postValue(Resource.loading(null))
         viewModelScope.launch {
             val peoplesData=peoplesRepository.getPeoplesData()
-            Log.i(TAG,"Size"+peoplesData.size)
             if (peoplesData.isNotEmpty()){
-                Log.i(TAG,"Size in VM"+peoplesData.size)
                 _peoplesDataResponse.postValue(Resource.success(peoplesData))
             }else{
                 _peoplesDataResponse.postValue(Resource.error(null,"Something went wrong"))

@@ -1,5 +1,7 @@
 package com.sujata.virginmoneydemo.data
 
-class RoomsRepository(private val roomsDataSource: RoomsDataSource) {
+import javax.inject.Inject
+
+class RoomsRepository @Inject constructor(private val roomsDataSource: RoomsDataSource) {
     suspend fun getRoomsData()=roomsDataSource.getRoomsData()
 }

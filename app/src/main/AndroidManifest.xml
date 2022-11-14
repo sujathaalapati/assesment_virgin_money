@@ -12,9 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VirginMoneyDemo"
+        android:name="com.sujata.virginmoneydemo.VirginMoneyApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.sujata.virginmoneydemo.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
@@ -23,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

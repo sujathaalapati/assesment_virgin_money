@@ -12,26 +12,28 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujata.virginmoneydemo.commonUtils.ConnectivityUtil
 import com.sujata.virginmoneydemo.databinding.FragmentPeoplesBinding
-import com.sujata.virginmoneydemo.framework.ViewModelFactory
 import com.sujata.virginmoneydemo.framework.api.Status
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PeoplesFragment : Fragment(), PeoplesRecyclerAdapter.ItemClickListener {
 
     private var _binding: FragmentPeoplesBinding? = null
-    private var isConnected : Boolean = true
+    private var isConnected: Boolean = true
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val peoplesViewModel: PeoplesViewModel by activityViewModels {
-        ViewModelFactory(requireActivity().application)
-    }
+    private val peoplesViewModel: PeoplesViewModel by activityViewModels()
 
-    private lateinit var adapter: PeoplesRecyclerAdapter
+    @Inject
+     lateinit var adapter: PeoplesRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = PeoplesRecyclerAdapter(this)
+        adapter.itemClickListener = this
     }
 
     override fun onCreateView(
@@ -58,7 +60,7 @@ class PeoplesFragment : Fragment(), PeoplesRecyclerAdapter.ItemClickListener {
                         Toast.makeText(context, resource.message, Toast.LENGTH_LONG).show()
                     }
                     Status.LOADING -> {
-                         binding.progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                 }
             }
@@ -72,10 +74,10 @@ class PeoplesFragment : Fragment(), PeoplesRecyclerAdapter.ItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isConnected = ConnectivityUtil.isConnected(context)
-        if (isConnected){
+        if (isConnected) {
             peoplesViewModel.fetchPeoplesData()
-        }else{
-            Toast.makeText(context,"No Internet Available",Toast.LENGTH_LONG)
+        } else {
+            Toast.makeText(context, "No Internet Available", Toast.LENGTH_LONG).show()
         }
 
 
@@ -109,7 +111,8 @@ class PeoplesFragment : Fragment(), PeoplesRecyclerAdapter.ItemClickListener {
     override fun onClick(position: Int) {
 
         //Toast.makeText(context, "Message Clicked", Toast.LENGTH_LONG).show()
-        val action=PeoplesFragmentDirections.actionPeoplesFragmentToPeoplesDetailsFragment(position)
+        val action =
+            PeoplesFragmentDirections.actionPeoplesFragmentToPeoplesDetailsFragment(position)
         findNavController().navigate(action)
     }
 }

@@ -1,4 +1,4 @@
-package com.sujata.virginmoneydemo.ui.Rooms
+package com.sujata.virginmoneydemo.ui.rooms
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,27 +11,30 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sujata.virginmoneydemo.commonUtils.ConnectivityUtil
 import com.sujata.virginmoneydemo.databinding.FragmentRoomsBinding
-import com.sujata.virginmoneydemo.framework.ViewModelFactory
 import com.sujata.virginmoneydemo.framework.api.Status
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class RoomsFragment : Fragment() ,RoomsRecyclerAdapter.ItemClickListener{
+@AndroidEntryPoint
+class RoomsFragment : Fragment(), RoomsRecyclerAdapter.ItemClickListener {
 
     private var _binding: FragmentRoomsBinding? = null
-    private var isConnected : Boolean = true
+    private var isConnected: Boolean = true
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val roomsViewModel :RoomsViewModel by activityViewModels{
-        ViewModelFactory(requireActivity().application)
-    }
+    private val roomsViewModel: RoomsViewModel by activityViewModels()
 
-    private lateinit var adapter: RoomsRecyclerAdapter
+    @Inject
+    lateinit var adapter: RoomsRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = RoomsRecyclerAdapter(this)
+        adapter.itemClickListener = this
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +57,7 @@ class RoomsFragment : Fragment() ,RoomsRecyclerAdapter.ItemClickListener{
                         Toast.makeText(context, resource.message, Toast.LENGTH_LONG).show()
                     }
                     Status.LOADING -> {
-                         binding.progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                 }
             }
@@ -68,29 +71,32 @@ class RoomsFragment : Fragment() ,RoomsRecyclerAdapter.ItemClickListener{
         }*/
         return root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isConnected = ConnectivityUtil.isConnected(context)
-        if (isConnected){
+        if (isConnected) {
             roomsViewModel.fetchRoomsData()
-        }else{
-            Toast.makeText(context,"No Internet Available",Toast.LENGTH_LONG)
+        } else {
+            Toast.makeText(context, "No Internet Available", Toast.LENGTH_LONG).show()
         }
 
     }
 
     private fun setupViews() {
-        val layoutManager = LinearLayoutManager(context)
-        binding.recyclerviewRooms.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                layoutManager.orientation
+        val mLayoutManager = LinearLayoutManager(context)
+        with(binding.recyclerviewRooms){
+            addItemDecoration(
+                DividerItemDecoration(
+                    context,
+                    mLayoutManager.orientation
+                )
             )
-        )
-        binding.recyclerviewRooms.layoutManager = layoutManager
-        binding.recyclerviewRooms.setHasFixedSize(true)
-
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+        }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
